@@ -26,8 +26,37 @@ Therefore, a type in C must have:
 * A known size
 * A known format
 
+Two types may have the same size, but not the same format. Such as, on most platforms, `float` and `int`. They usually
+have the same size, and as such, `sizeof(int) == sizeof(float)` holds true. However, they have an entirely different format,
+and thus will behave differently when called with particular functions.
+
 ## Static Templates
 
 The first type of template that will be discussed are static templates. Static templates are created at compile time and
-do not perform runtime checks on sizes, because they shift that responsibility to the compiler.
+do not perform runtime checks on sizes, because they shift that responsibility to the compiler. Static templates used in C
+are similar to the templates from the C++ language, because they depend on the actual type members, such as in the case of a
+`struct`. In C, the only native means of creating static templates are through the use of macros.
+
+*Note: The use of the word 'static' only means 'at compile time'. It is not related to the C keyword `static`, which means a function has internal linkage*
+
+To begin, let's observe the simplest form of a static template, a definition macro:
+
+```c
+#define DEF(type, name, val) type name = val
+DEF(int, foo, 5);
+// Then used as normal
+printf("%d", foo);
+```
+
+The `DEF` macro described above can work with any type which can be initialized via the `=` operator. It could also work
+by doing:
+
+```c
+DEF(const char*, txt, "foo");
+```
+
+This template allows the code needed to define variables with basic type to be *generalized* and *abstracted*. 
+
+
+
 
