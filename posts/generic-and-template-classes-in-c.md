@@ -55,8 +55,68 @@ by doing:
 DEF(const char*, txt, "foo");
 ```
 
-This template allows the code needed to define variables with basic type to be *generalized* and *abstracted*. 
+This template allows the code needed to define variables with basic type to be *generalized* and *abstracted*. The goal is
+to make code sharable and similar between types. However, this example is trivial in the sense it provides very little simplification
+over just writing out the statement. The real power comes from code that performs more complex tasks.
 
+### Foreach
+
+In C, `for` loops can result in a lot of code being very type specific, leading to redundant code, and huge source files. With the help of
+static templates in the form of macros, we can make for looping much smoother in C. First, consider a standard for loop:
+
+```c
+for (int i = 0; i < 10; i++) {
+    printf("%d", i);
+    // ... //
+}
+```
+
+There are four distinct syntax components. The initialization of the variable, the termination condition, the
+incremental step, and finally the actual block of code to be executed upon each increment in the loop. Given those four elements,
+we can construct a macro which acts as a `foreach` loop.
+
+```c
+#define FOREACH(type, start, end, fn) \
+                for (type _foreach_var = start; _foreach_var != end; _foreach_var++) { \
+                      fn(_foreach_var); \
+                }
+```
+
+This template works for primitive type *ranges*, where there is a known type, a start value, an end value, and a desired
+function to be applied for each member of the range. The name `_foreach_var` is chosen to purposefully decrease the possibility of
+collision with one of the macro's arguments. Do note, `fn` *does not* have to be a function. You could, in this case, pass in
+a macro for `fn`, which is also called a higher order macro:
+
+```c
+#define PRINT_INT(n) printf("%d", n)
+// use FOREACH
+FOREACH(int, 0, 5, PRINT_INT)
+```
+
+For loop templates can also be used on loops that *iterate* over the contents of an aggregate type, such as an array. Using
+aggregate types can sometimes be even more straight forward with macros, because we can derive more information from an aggregate type
+than a scalar type. Using the `sizeof` operator, we can determine the number of elements in an array. 
+
+```c
+long nums[4];
+const size_t nums_count = sizeof(nums) / sizeof(nums[0]);
+printf("%zu\n", nums_count);
+// 4
+```
+
+The `sizeof` operator always takes the size of a `value` in bytes. This means passing an array will evaluate to the
+total size of that array. This does not work with pointer types, as the size of any pointer will always be the same as 
+`sizeof(void*)`. This information that can be inferred from an array can be used to make a powerful "foreach" template:
+
+```c
+#define FOREACH(arr, fn) \
+            for (size_t _ind = 0; _ind < sizeof(arr) / sizeof(arr[0]); _ind++) { \
+                fn(_ind[i]); \
+            }
+```
+
+In the `FOREACH` macro above, the only two arguments required are the array itself, `arr`, and some callable to apply for each
+element in `arr`.
 
 
 
