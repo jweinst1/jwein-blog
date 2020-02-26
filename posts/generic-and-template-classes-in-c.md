@@ -116,7 +116,15 @@ total size of that array. This does not work with pointer types, as the size of 
 ```
 
 In the `FOREACH` macro above, the only two arguments required are the array itself, `arr`, and some callable to apply for each
-element in `arr`.
+element in `arr`. The `size_t` type can be used to access any array element. We don't need to also pass in the type of
+`arr`, because we don't need it, we can let `fn` handle it.
+
+### Functions
+
+Static templates can also be implemented in C to embody entire functions. This approach to generics and templating is needed
+when the desired behavior is more complex than what can be captured in a loop-oriented template. Typically in C, 
+parameters taking the form of multiple different types will be given the type `void*`, which another `size_t` parameter
+representing the size of the memory the `void*` points to.
 
 
 
