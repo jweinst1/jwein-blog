@@ -139,6 +139,45 @@ void* pmes = mes;
 void* pb = &b;
 ```
 
-Those are all valid definitions. 
+Those are all valid definitions. There is no way for the compiler to interpret an incorrect type is being passed to a `void*`
+intended for a different type. Therefore, functional templates provide a way to limit the scope of types
+accepted into generic functions. For a start, let's look at an example of comparing two aggregate types by a particular
+field's value for equality:
 
+```c
+
+#define FIELD_EQ(type, field) \
+         int FIELD_EQ_##type(const type* _obj1, const type* _obj2) \
+         {  \
+            return _obj1->field == _obj2->field; \
+         }
+```
+
+The above template is a macro that produces a function definition everytime it is called. This function takes two 
+`const` pointers of the specified type, and returns the result of comparing `field`. The name of the function produced
+has the name of the type appended to the end of it. We need each definition of this equality template function to have it's own name, 
+because C does not allow functions to have the same name yet conflicting types. This means that, with this template, doing
+
+```c
+FIELD_EQ(point_t, x)
+FIELD_EQ(foo_t, x)
+```
+
+Would actually produce `FIELD_EQ_point_t` and `FIELD_EQ_foo_t` respectively. 
+
+```c
+typedef struct {
+  int x;
+  int y;
+} point_t;
+
+FIELD_EQ(point_t, x)
+
+int main(void) {
+  point_t f1 = {3, 5};
+  point_t f2 = {3, 3};
+  printf("result is %d\n", FIELD_EQ_point_t(&f1, &f2));
+  return 0;
+}
+```
 
