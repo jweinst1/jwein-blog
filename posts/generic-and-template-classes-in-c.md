@@ -163,7 +163,9 @@ FIELD_EQ(point_t, x)
 FIELD_EQ(foo_t, x)
 ```
 
-Would actually produce `FIELD_EQ_point_t` and `FIELD_EQ_foo_t` respectively. 
+Would actually produce `FIELD_EQ_point_t` and `FIELD_EQ_foo_t` respectively. The advantage here is, we can create the same function
+for multiple types without explicitly writing out those functions multiple times. Here is an example of bothing using the functional 
+template and calling the produced function:
 
 ```c
 typedef struct {
@@ -180,4 +182,50 @@ int main(void) {
   return 0;
 }
 ```
+
+This pattern of function production can be used to create identical C APIs between different types.
+
+### Structures
+
+In C, structures, called "structs" for short, are aggregate types that can contain heterogenous, named fields of data.
+In comparison to other languages, a `struct` is like an object with no methods, no constructor, and no destructor. Structs are chunks
+of formatted data composed of multiple scalar types. Structs are different than objects in other languages because there is no
+builtin way of achieving polymorphism. Nor is there a native way to achieve inheritance, such as in the desired case of a 
+parent struct and child struct.
+
+Interpreted programming languages, specifically Python, use an object "head" approach. This means that, any struct that is considered
+an "object" of the language, has a special collection of fields in the beginning of it's definition, that hold information
+related to the structs idenity. This allows all of the structs to be casted to a common base `struct` type, as long as
+they carry these fields before any other specific fields are defined. The Python C API accomplishes this with a macro called
+`PyObject_HEAD`. This macro carries fields that identify the type of the struct, it's size, and more.
+
+A more basic example would look like the following:
+
+```c
+typedef unsigned obj_type_t
+#define OBJECT_TYPE_INT 1
+
+#define OBJECT_HEAD obj_type_t type;
+// Base struct 
+typedef struct { 
+   OBJECT_HEAD;
+} obj_t;
+
+// child struct
+typedef struct {
+   OBJECT_HEAD;
+   int val;
+} obj_int_t;
+
+int obj_int_check(const obj_t* obj)
+{
+    return obj->type == OBJECT_TYPE_INT;
+}
+
+int main(void) {
+   obj_int_t i = { OBJECT_TYPE_INT, 4};
+   return !obj_int_check((obj_t*)(&i));
+}
+
+``` 
 
