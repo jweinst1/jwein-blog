@@ -124,7 +124,21 @@ element in `arr`. The `size_t` type can be used to access any array element. We 
 Static templates can also be implemented in C to embody entire functions. This approach to generics and templating is needed
 when the desired behavior is more complex than what can be captured in a loop-oriented template. Typically in C, 
 parameters taking the form of multiple different types will be given the type `void*`, which another `size_t` parameter
-representing the size of the memory the `void*` points to.
+representing the size of the memory the `void*` points to. This style of function definiton is used in the standard library,
+such as with the functions `memcpy` and `memset`.
 
+An issue with using `void*` is the lack of type checking. Any address of any type in C can be stored in `void*`, such as
+
+```c
+int s = 3;
+char mes[50];
+long b = 6754333;
+
+void* ps = &s;
+void* pmes = mes;
+void* pb = &b;
+```
+
+Those are all valid definitions. 
 
 
