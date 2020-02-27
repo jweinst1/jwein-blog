@@ -124,7 +124,7 @@ element in `arr`. The `size_t` type can be used to access any array element. We 
 Static templates can also be implemented in C to embody entire functions. This approach to generics and templating is needed
 when the desired behavior is more complex than what can be captured in a loop-oriented template. Typically in C, 
 parameters taking the form of multiple different types will be given the type `void*`, which another `size_t` parameter
-representing the size of the memory the `void*` points to. This style of function definiton is used in the standard library,
+representing the size of the memory the `void*` points to. This style of function definition is used in the standard library,
 such as with the functions `memcpy` and `memset`.
 
 An issue with using `void*` is the lack of type checking. Any address of any type in C can be stored in `void*`, such as
@@ -164,7 +164,7 @@ FIELD_EQ(foo_t, x)
 ```
 
 Would actually produce `FIELD_EQ_point_t` and `FIELD_EQ_foo_t` respectively. The advantage here is, we can create the same function
-for multiple types without explicitly writing out those functions multiple times. Here is an example of bothing using the functional 
+for multiple types without explicitly writing out those functions multiple times. Here is an example of both using the functional 
 template and calling the produced function:
 
 ```c
