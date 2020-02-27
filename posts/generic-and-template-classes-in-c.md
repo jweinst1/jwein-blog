@@ -32,7 +32,7 @@ and thus will behave differently when called with particular functions.
 
 ## Static Templates
 
-The first type of template that will be discussed are static templates. Static templates are created at compile time and
+The main type of templates that can be implemented in C are static templates. Static templates are created at compile time and
 do not perform runtime checks on sizes, because they shift that responsibility to the compiler. Static templates used in C
 are similar to the templates from the C++ language, because they depend on the actual type members, such as in the case of a
 `struct`. In C, the only native means of creating static templates are through the use of macros.
@@ -226,6 +226,27 @@ int main(void) {
    obj_int_t i = { OBJECT_TYPE_INT, 4};
    return !obj_int_check((obj_t*)(&i));
 }
-
 ``` 
 
+In the above, `obj_t` is the base `struct` of all other `obj_*_t` related structs. It is defined purely with the macro
+`OBJECT_HEAD`, holding the type information about the struct. This macro is a template, any other struct with `OBJECT_HEAD`
+as part of it's definition will be able to be cast to `obj_t`. This can be seen in the `struct` type `obj_int_t`. The creation of struct
+types which can be cast to `obj_t` can be simplfied with a higher order macro template:
+
+```c
+#define OBJECT_START(name) \
+            struct name { \
+            OBJECT_HEAD;
+#define OBJECT_END(name) }; \
+             typedef struct name name
+```
+
+These two macros, `OBJECT_START` and `OBJECT_END` allow more standard type definitions of template structs. They guarantee any
+defining statements between the start and end macro will form a `obj_t` compatible type. More so, it ensures the name of the type will exist
+under the `struct <name>` and `<name>` namespaces.
+
+## Conclusion
+
+Overall, implementing templates in C can make C code more readable, less redundant, and less prone to errors. It allows effecient development
+without the need to incorporate or switch to C++ or languages with builtin template systems, if desired. Using generics and templates in C can also make programs
+more type safe, and prevent improper access of memory.
