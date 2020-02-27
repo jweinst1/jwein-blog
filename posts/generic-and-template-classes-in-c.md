@@ -1,4 +1,4 @@
-# Generic and Template Classes in C
+# Using Templates and Generics in C
 
 Generics are syntax components of a programming language that can be reused for different types of objects.
 Typically, generics take the form classes or functions, which take type(s) as a parameter. Generics are also
