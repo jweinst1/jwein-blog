@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*Parsing and Querying JSON*/
+
+/**
+ * Tokens
+ */
 #define JSONT_OSTART '{'
 #define JSONT_OEND '}'
 #define JSONT_ASTART '['
