@@ -76,6 +76,57 @@ void json_pair_buf_init(json_pair_buf_t* buf)
     assert(buf->items != NULL);
 }
 
+json_pair_buf_t* json_pair_buf_new(void)
+{
+    json_pair_buf_t* new_buf = malloc(sizeof(json_pair_buf_t));
+    assert(new_buf != NULL);
+    json_pair_buf_init(new_buf);
+    return new_buf;
+}
+
+/**
+ * optional to add default macro for growth factor.
+ */
+
+void json_pair_buf_grow(json_pair_buf_t* buf, size_t fac)
+{
+    buf->cap *= fac;
+    buf->items = realloc(buf->items, buf->cap);
+    assert(buf->items != NULL);
+}
+
+void json_pair_buf_deinit(json_pair_buf_t* buf)
+{
+    free(buf->items);
+    buf->cap = 0;
+    buf->len = 0;
+}
+
+void json_pair_buf_del(json_pair_buf_t* buf)
+{
+    json_pair_buf_deinit(buf);
+    free(buf);
+}
+
+static char* 
+__json_strdup(const char* string)
+{
+    size_t len = strlen(string);
+    char* duped = malloc(len + 1);
+    (void)strcpy(duped, string);
+    return duped;
+}
+
+void json_pair_buf_push(json_pair_buf_t* buf, const char* key, json_t* value)
+{
+    if (buf->len == buf->cap)
+        json_pair_buf_grow(buf, 2);
+    if (key != NULL) {
+        buf->items[buf->len].key = __json_strdup(key);
+    }
+    buf->items[buf->len++].value = value;
+}
+
 
 int main(void) {
 	printf("running: %s\n", __FILE__);
