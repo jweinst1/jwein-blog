@@ -127,8 +127,24 @@ void json_pair_buf_push(json_pair_buf_t* buf, const char* key, json_t* value)
     buf->items[buf->len++].value = value;
 }
 
+typedef int (*json_test_fn)(void);
+
+typedef struct {
+    const char* name;
+    json_test_fn test;
+} json_test_t;
+
+static const json_test_t TESTS_TO_RUN[] = {
+       
+};
+static const size_t TESTS_TO_RUN_SIZE = sizeof(TESTS_TO_RUN) / sizeof(json_test_t);
+
 
 int main(void) {
-	printf("running: %s\n", __FILE__);
+    size_t t;
+    puts("Running Json Tests: ");
+    for (t = 0; t < TESTS_TO_RUN_SIZE; t++) {
+        printf("TEST: '%s' RESULT: '%s'\n", TESTS_TO_RUN[t].name, TESTS_TO_RUN[t].test() ? "PASS" : "FAIL");
+    }
 	return 0;
 }

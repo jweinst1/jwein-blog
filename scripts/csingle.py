@@ -30,3 +30,4 @@ if __name__ == '__main__':
     os.remove(exec_name + ".exe")
     os.remove(exec_name + ".obj")
     print("Compilation completed!")
+    
