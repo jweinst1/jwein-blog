@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 import os
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 
 if __name__ == '__main__':
     pass
@@ -17,8 +17,11 @@ if __name__ == '__main__':
     try:
         compile_output = check_output(compile_args)
         print("Got the output from compiler: " + compile_output)
+    except CalledProcessError as exc:
+        print("Got compiling error with output: " + exc.output);
+        sys.exit(3)
     except Exception as exc:
-        print("Got compiler error: " + str(exc))
+        print("Got unkown error: " + str(exc))
         sys.exit(2)
         
     print("Running compiled executable....")
