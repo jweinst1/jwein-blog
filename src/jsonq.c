@@ -135,7 +135,7 @@ typedef struct {
 } json_test_t;
 
 static const json_test_t TESTS_TO_RUN[] = {
-       
+    {"last", NULL}
 };
 static const size_t TESTS_TO_RUN_SIZE = sizeof(TESTS_TO_RUN) / sizeof(json_test_t);
 

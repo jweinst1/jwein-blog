@@ -11,7 +11,7 @@ if __name__ == '__main__':
         sys.exit(1)
     c_file = user_args[0]
     exec_name = c_file.split(".")[0]
-    compile_args = ["cl", c_file]
+    compile_args = ["cl", "/D_CRT_SECURE_NO_WARNINGS", c_file]
     run_args = [exec_name + ".exe"]
     
     try:
@@ -25,7 +25,10 @@ if __name__ == '__main__':
         sys.exit(2)
         
     print("Running compiled executable....")
-    print(check_output(run_args))
+    try:
+        print(check_output(run_args))
+    except Exception as exc:
+        os.remove(exec_name + ".exe")
     print("Removing result files now...")
     os.remove(exec_name + ".exe")
     os.remove(exec_name + ".obj")
